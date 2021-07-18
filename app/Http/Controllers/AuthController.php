@@ -20,25 +20,19 @@ class AuthController extends Controller
             'email' => 'required|email|unique:users',
             'password' => 'required|confirmed',
         ]);
-
         try {
-
             $user = new User;
             $user->name = $request->input('name');
             $user->email = $request->input('email');
             $plainPassword = $request->input('password');
             $user->password = app('hash')->make($plainPassword);
-
             $user->save();
-
             //return successful response
             return response()->json(['user' => $user, 'message' => 'CREATED'], 201);
-
         } catch (\Exception $e) {
             //return error message
             return response()->json(['message' => 'User Registration Failed!'], 409);
         }
-
     }
 
      /**
@@ -62,5 +56,21 @@ class AuthController extends Controller
         }
 
         return $this->respondWithToken($token);
+    }
+     /**
+     * Logout
+     *
+     * @param  Request  $request
+     * @return Response
+     */
+    public function logout(Request $request)
+    {
+            try {
+                Auth::logout();
+                return response()->json(['message'=>'Logout Success'], 200);
+            } catch (\Exception $e) {
+                //return error message
+                return response()->json(['message' => 'Logout Failed!'], 409);
+            }
     }
 }
